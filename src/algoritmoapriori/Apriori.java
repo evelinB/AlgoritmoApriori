@@ -10,32 +10,32 @@ public class Apriori {
     float minSupAp;
     float minConfAp;
     String directorio;
+    Frecuente frec;
     
    public Apriori(float minSup, float minConf , String directorio) {
-        this.minSupAp = minSup;
-        this.minConfAp = minConf;
+        this.minSupAp = minSup/100;
+        this.minConfAp = minConf/100;
         this.directorio = directorio;
     }
 
     public void correrAlgoritmo()    
     {    
-        minSupAp= minSupAp/100;
-        minConfAp=minConfAp/100; 
-        int k = 1;
+       
         LeeFichero r = new LeeFichero(directorio);       
         r.generarListas();
         for (int i=0;i<r.getUnicos().size();i++){
             System.out.println(r.getUnicos().get(i));
         }
+        
         List<Elemento> elementosPri = pasadaInicial(r.getTrans(), r.getUnicos());
         //pruebaDePasada(elementosPri);
-        Frecuente frec = new Frecuente();        
+        frec = new Frecuente();        
         List<Elemento> elementosFrecuentes = frec.genFrecuentesInicial(elementosPri, minSupAp, r.CanTrans);
-        k++;
+        
+        frecuentesK(elementosFrecuentes,r.getTrans(),r.CanTrans);
+        
        // 1 - Generar Candidatos k
-        List <Elemento> elementosCandidatosk = generarCandidatosK(elementosFrecuentes, k, r.getTrans());
-       pruebaDePasada(elementosCandidatosk);
-        // 2 - Generar Frecuentes k
+       // 2 - Generar Frecuentes k
     }
     
     private List<Elemento> pasadaInicial(List<List<String>> transacciones, List<String> unicos  )
@@ -242,6 +242,73 @@ public class Apriori {
     }
 
     private List<Elemento> crearParaKIgualN(List<Elemento> listaDeFrecuentes, int k, List<List<String>> transacciones) {
-        return null;
+         List <Elemento> candidatosK = new ArrayList<Elemento>();
+        String [] stSalida = new String [k];        
+//            1 - Tomar primer elemento de freceuente k-1
+            for (int i=0;i<listaDeFrecuentes.size();i++){
+//            2 - Tomar segundo elemento freceuente k-1                
+                String [] str1 = listaDeFrecuentes.get(i).Descripcion.split(" ");
+                for (int j=i+1;j<listaDeFrecuentes.size();j++){                    
+                    String [] str2 = listaDeFrecuentes.get(j).Descripcion.split(" ");
+                    System.out.println("String de str1: "+Arrays.toString(str1));
+                    System.out.println("String de str2: "+Arrays.toString(str2));
+                    if (k==2 ){
+                        
+                        stSalida [k-2] = str1[0];
+                        stSalida [k-1] = str2[0];
+                        System.out.println("String de salida: "+Arrays.toString(stSalida));
+                        Elemento elemento = new Elemento(Arrays.toString(stSalida));
+                        elemento.setCantidad(0);
+                        elemento.obtenerFrecuencia(transacciones,stSalida);
+                        
+                        candidatosK.add(elemento);
+                    }else{
+                            boolean bandera = true;
+        //            3 - Comparar los primernos k-1 elementos
+                            int n=0;
+                        while (bandera && n<(str1.length-2)) {
+        //            4 - Si son iguales, crear nuevo elemento y agregarlo
+                             if(str1[n]==str2[n]){
+                                stSalida [n] = str1[n];
+                                   }
+        //            5 - Si no son iguales, obtener siguiente
+                                   else {bandera = false;}
+                            n++;
+                           }
+                            if(bandera){
+                                stSalida [k-1] = str1 [str1.length-1];
+                                stSalida [k] = str2 [str2.length-1];
+                            }
+                            PruebaPoda.pruebapodas(poda(stSalida,listaDeFrecuentes,k));
+                        }
+                    String salida = stSalida.toString();
+                    //System.out.println("St Salida "+Arrays.toString(stSalida));
+                    //PruebaPoda.pruebapodas(poda(stSalida,listaDeFrecuentes,k));
+                    if (poda(stSalida,listaDeFrecuentes,k)){
+                        Elemento elemento = new Elemento(salida);
+                        elemento.obtenerFrecuencia(transacciones,stSalida);
+                        candidatosK.add(elemento);
+                    }                               
+                }                                
+            }                                                    
+        return candidatosK;
+     }
+    
+    private List <Elemento> frecuentesK(List<Elemento> listaDeFrecuentes, List<List<String>> transacciones, int canTrans){
+       boolean bandera = true;
+       int k=2;
+       List <Elemento> elementosCandidatosk = null;
+        while(bandera){          
+                elementosCandidatosk = crearParaKIgualN(listaDeFrecuentes, k, transacciones);
+                frec.genFrencuentesK(elementosCandidatosk,minSupAp, canTrans);
+                pruebaDePasada(elementosCandidatosk);
+                
+                if (frec.frecuentes.get(k).size()==1){
+                    bandera=false;
+                }
+                k++;
+                    }
+           
+        return elementosCandidatosk;    
     }
 }
