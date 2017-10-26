@@ -18,7 +18,9 @@ public class Apriori {
     }
 
     public void correrAlgoritmo()    
-    {
+    {    
+        minSupAp= minSupAp/100;
+        minConfAp=minConfAp/100; 
         int k = 1;
         LeeFichero r = new LeeFichero(directorio);       
         r.generarListas();
@@ -26,14 +28,13 @@ public class Apriori {
             System.out.println(r.getUnicos().get(i));
         }
         List<Elemento> elementosPri = pasadaInicial(r.getTrans(), r.getUnicos());
-        pruebaDePasada(elementosPri);
+        //pruebaDePasada(elementosPri);
         Frecuente frec = new Frecuente();        
         List<Elemento> elementosFrecuentes = frec.genFrecuentesInicial(elementosPri, minSupAp, r.CanTrans);
         k++;
-        //pruebaDePasada(elementosFrecuentes);
-        // 1 - Generar Candidatos k
+       // 1 - Generar Candidatos k
         List <Elemento> elementosCandidatosk = generarCandidatosK(elementosFrecuentes, k, r.getTrans());
-       // pruebaDePasada(elementosCandidatosk);
+       pruebaDePasada(elementosCandidatosk);
         // 2 - Generar Frecuentes k
     }
     
@@ -41,11 +42,14 @@ public class Apriori {
     {
         ArrayList<Elemento> candidatosIniciales = new ArrayList<Elemento>();
         //1 - Tomar primer transaccion
-        for (int x=0; x<unicos.size();x++){            
+        for (int x=0; x<unicos.size();x++){  
+            //2 - Obtener primer elemento de la lista ordenada Unicos
             String unUnico = unicos.get(x);
             Elemento elemento = new Elemento(unUnico);
             for(int i=0;i<transacciones.size();i++){            
                 List<String> transaccionI = transacciones.get(i); 
+                //3 - buscar en cada trans si aparece el primer elem unico
+                //4 - Si existe en la trans aumenta cantidad de ocurrencia del elto.
                 if(transaccionI.contains(unUnico)){
                     elemento.setCantidad(elemento.getCantidad()+1);
                 }
@@ -65,7 +69,7 @@ public class Apriori {
              candidatosIniciales.add(elemento);
         }
         for (int i = 0;i< candidatosIniciales.size(); i++) {
-            System.out.println(candidatosIniciales.get(i).getDescripcion()+" "+candidatosIniciales.get(i).getCantidad());
+            System.out.println("elem candidato inicial"+" "+candidatosIniciales.get(i).getDescripcion()+" cant ocurrencia "+candidatosIniciales.get(i).getCantidad());
         }
         //6 - Devolver la lista de candidatos
         return candidatosIniciales;
@@ -183,7 +187,8 @@ public class Apriori {
             System.out.println("Cantidad :" + elementos.get(i).getCantidad());   
         }  
     }
-    
+
+// ver si este metodo queda!!   
     private boolean validarExistEInc (List<Elemento> elementos, String e)
     {
         for (Elemento elemento:elementos)
