@@ -6,7 +6,8 @@ import java.util.List;
 public class Frecuente {
     
     List<List<Elemento>> frecuentes = new ArrayList<List<Elemento>>();
-        
+    
+   //-----------Devuelve F1, primer lista de elementos frecuentes que cumplen con minsup--------------//    
     public List<Elemento> genFrecuentesInicial(List<Elemento> listaElementos, float minSup, int cantTrans){
         //1 - Obtener el primer elemento de la lista de candidatos
         List<Elemento> elementosFrecuentesInicial = new ArrayList<Elemento>();
@@ -45,7 +46,9 @@ public class Frecuente {
             if (soporte>=minSup) {
                 //4 - Si es mayor o igual lo agrega a frecuentes1
                 //System.out.println(soporte);
-                elementosFrecuentesInicial.add(unElemento);        
+                elementosFrecuentesInicial.add(unElemento); 
+                
+        System.out.println("cumplen minsup:"+unElemento.getDescripcion());
             }
             //5 - Sino, obtener siguiente elemento            
         }
