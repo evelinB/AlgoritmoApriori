@@ -275,11 +275,8 @@ public class Apriori {
                     //System.out.println("muestra frecuentes  "+elementosCandidatosk.get(k).getCantidad());
                 listaFrecuentes = frec.genFrencuentesK(elementosCandidatosk,minSupAp, canTrans);
                 
-                frec.frecuentes.add(listaFrecuentes);
-                    
-               
-                //pruebaDePasada(elementosCandidatosk);
-                
+                //frec.frecuentes.add(listaFrecuentes);
+                 
                 if (frec.frecuentes.get(k-1).isEmpty())
                 {
                     bandera=false;
