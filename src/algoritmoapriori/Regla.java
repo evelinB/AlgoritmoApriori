@@ -7,8 +7,8 @@ import java.util.Comparator;
 import java.util.List;
 
 public class Regla {
-    List <String> antecedentes = new ArrayList<String>();
-    List <String> consecuentes = new ArrayList<String>();
+    public List <String> antecedentes = new ArrayList<String>();
+    public List <String> consecuentes = new ArrayList<String>();
     float soporte;
     float confianza;
     

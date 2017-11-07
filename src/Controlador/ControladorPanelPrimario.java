@@ -5,8 +5,6 @@
  */
 package Controlador;
 
-import Controlador.ControladorPanelSecundario;
-import Controlador.ControladorPrincipal;
 import UI.PanelPrimario;
 import UI.Principal;
 import algoritmoapriori.Apriori;
@@ -14,6 +12,8 @@ import algoritmoapriori.Regla;
 import java.awt.CardLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -31,7 +31,7 @@ import javax.swing.SwingWorker;
  *
  * @author Propietario
  */
-public class ControladorPanelPrimario implements ActionListener{
+public class ControladorPanelPrimario implements ActionListener, KeyListener{
     
     PanelPrimario pp;
     Principal principal;
@@ -45,6 +45,7 @@ public class ControladorPanelPrimario implements ActionListener{
         this.pp.barraProgreso.setVisible(false);
         this.pp.seleccionarBtn.addActionListener(this);
         this.pp.calcularReglas.addActionListener(this);
+        this.pp.confianzatxf.addKeyListener(this);
         this.pp.path.addActionListener(this);
         cargarPath();
     }
@@ -70,8 +71,7 @@ public class ControladorPanelPrimario implements ActionListener{
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getSource()==pp.calcularReglas){
-          new LlamaApriori().execute();
-          
+          new LlamaApriori().execute();          
         }
         
         if(e.getSource()==pp.seleccionarBtn){
@@ -104,6 +104,21 @@ public class ControladorPanelPrimario implements ActionListener{
         }
         
     }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+         if (e.getKeyCode()==KeyEvent.VK_ENTER){
+              new LlamaApriori().execute();      
+        }
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+    }
     
     public class LlamaApriori extends SwingWorker<Void, Void>{
                 
@@ -127,7 +142,7 @@ public class ControladorPanelPrimario implements ActionListener{
                 minSup = Float.parseFloat(pp.Soportetxf.getText());
                 minConf = Float.parseFloat(pp.confianzatxf.getText());
                 path = pp.path.getText();
-                ap = new Apriori(minSup,minConf,path, principal);
+                ap = new Apriori(minSup,minConf,path);
                ap.correrAlgoritmo();
             }
            
@@ -138,9 +153,10 @@ public class ControladorPanelPrimario implements ActionListener{
         @Override
         //cuando termina el algoritmo debe mostrar en el done
         public void done(){
-           new ControladorPanelSecundario(principal).cargarListas(ap.lista1);
-            CardLayout cl = (CardLayout) principal.Contenedor.getLayout();
-            cl.show(principal.Contenedor,"card3");
+           pp.barraProgreso.setVisible(false);
+           new ControladorPanelSecundario(principal).cargarListas(ap.reglasFinales);
+           CardLayout cl = (CardLayout) principal.Contenedor.getLayout();
+           cl.show(principal.Contenedor,"card3");
         
         }
     }

@@ -9,13 +9,18 @@ import UI.PanelSecundario;
 import UI.Principal;
 import algoritmoapriori.Regla;
 import java.awt.CardLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
-import java.util.ArrayList;
 import java.util.List;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
+import javax.swing.JLabel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 
@@ -28,35 +33,28 @@ public class ControladorPanelSecundario implements ActionListener{
     PanelSecundario ps;
     Principal principal;
     List<Regla>reglas;
-    private DefaultListModel model;
 
     public ControladorPanelSecundario(Principal principal) {
-        System.out.println("reglascons");
+        this.principal=principal;         
         principal.panelSecundario.volver.addActionListener(this);
-        this.principal=principal;
-        
-        Synchronizer synchronizer = new Synchronizer(principal.panelSecundario.jScrollPane1, principal.panelSecundario.jScrollPane2, principal.panelSecundario.jScrollPane3);
-        principal.panelSecundario.jScrollPane1.getVerticalScrollBar().addAdjustmentListener(synchronizer);
-        principal.panelSecundario.jScrollPane1.getHorizontalScrollBar().addAdjustmentListener(synchronizer);
-        principal.panelSecundario.jScrollPane2.getVerticalScrollBar().addAdjustmentListener(synchronizer);
-        principal.panelSecundario.jScrollPane2.getHorizontalScrollBar().addAdjustmentListener(synchronizer);
     }
     
     public void cargarListas( List<Regla> lista){
-        DefaultListModel lm1 = (DefaultListModel) principal.panelSecundario.lista1.getModel();
-        DefaultListModel lm2 = (DefaultListModel) principal.panelSecundario.lista2.getModel();
-        DefaultListModel lm3 = (DefaultListModel) principal.panelSecundario.lista3.getModel();
         for (int i = 0; i < lista.size(); i++) {
-            lm1.addElement(lista.get(i).antecedentes);
-            lm2.addElement(lista.get(i).consecuentes);
-            lm3.addElement("-->");
-        }
-        
-    }
+          JLabel jLabel = new JLabel(lista.get(i).antecedentes+"  --  "+lista.get(i).consecuentes);
+             principal.panelSecundario.panel2.add(jLabel);
+             principal.panelSecundario.panel2.add(Box.createRigidArea(new Dimension(1, 5)));
+         } 
+           BoxLayout boxLayout = new BoxLayout( this.principal.panelSecundario.panel2, BoxLayout.Y_AXIS);
+           principal.panelSecundario.panel2.setLayout(boxLayout);
+           principal.panelSecundario.panel2.revalidate();
+           principal.panelSecundario.reglas.setText(String.valueOf(lista.size()));
+         }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-          if(e.getSource()==ps.volver){
+          if(e.getSource()==principal.panelSecundario.volver){
+              principal.panelSecundario.panel2.removeAll();
               CardLayout cl = (CardLayout) principal.Contenedor.getLayout();
               cl.show(principal.Contenedor,"card2");
           }

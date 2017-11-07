@@ -13,7 +13,7 @@ public class Apriori {
     float minConfAp;
     String directorio;
     Frecuente frec;
-    List<Regla> reglasFinales = new ArrayList<Regla>();
+    public List<Regla> reglasFinales = new ArrayList<Regla>();
     String [] data;
     ArrayList<String> aux = new ArrayList<>();
     boolean numerico;
