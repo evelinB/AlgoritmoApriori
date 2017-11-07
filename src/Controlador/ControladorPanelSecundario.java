@@ -20,6 +20,7 @@ import java.util.List;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
@@ -33,6 +34,8 @@ public class ControladorPanelSecundario implements ActionListener{
     PanelSecundario ps;
     Principal principal;
     List<Regla>reglas;
+     ImageIcon image = new ImageIcon("src/Imagenes/flecha.png");
+    
 
     public ControladorPanelSecundario(Principal principal) {
         this.principal=principal;         
@@ -41,13 +44,15 @@ public class ControladorPanelSecundario implements ActionListener{
     
     public void cargarListas( List<Regla> lista){
         for (int i = 0; i < lista.size(); i++) {
-          JLabel jLabel = new JLabel(lista.get(i).antecedentes+"  --  "+lista.get(i).consecuentes);
-             principal.panelSecundario.panel2.add(jLabel);
-             principal.panelSecundario.panel2.add(Box.createRigidArea(new Dimension(1, 5)));
+          JLabel antecedente = new JLabel(""+lista.get(i).antecedentes);
+          JLabel consecuente = new JLabel(lista.get(i).consecuentes+"");
+            JLabel icono = new JLabel(image);
+             principal.panelSecundario.panel2.add(antecedente);
+              principal.panelSecundario.panel2.add(icono);
+               principal.panelSecundario.panel2.add(consecuente);
          } 
            BoxLayout boxLayout = new BoxLayout( this.principal.panelSecundario.panel2, BoxLayout.Y_AXIS);
-           principal.panelSecundario.panel2.setLayout(boxLayout);
-           principal.panelSecundario.panel2.revalidate();
+           principal.panelSecundario.panel2.setLayout(new GridLayout(lista.size(), 3));
            principal.panelSecundario.reglas.setText(String.valueOf(lista.size()));
          }
 

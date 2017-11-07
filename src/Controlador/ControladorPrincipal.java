@@ -39,7 +39,7 @@ public class ControladorPrincipal  {
     JProgressBar barraProgreso = new JProgressBar(); 
    
     public ControladorPrincipal() {
-        principal = new Principal();        
+        principal = new Principal();     
         new ControladorPanelPrimario(principal.panelPrimario, principal);
         //new ControladorPanelSecundario(principal.panelSecundario, principal);
         principal.setLocationRelativeTo(null);
