@@ -1,11 +1,11 @@
 package algoritmoapriori;
 
-import Controlador.ControladorPanelSecundario;
 import UI.Principal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class Apriori {   
@@ -13,29 +13,41 @@ public class Apriori {
     float minConfAp;
     String directorio;
     Frecuente frec;
+    List<Regla> reglasFinales = new ArrayList<Regla>();
     String [] data;
-    ArrayList<String> aux= new ArrayList<>();
+    ArrayList<String> aux = new ArrayList<>();
     boolean numerico;
     public List<Regla>lista1;
     public List<String>lista2;
     Principal principal;
     
-    public Apriori(float minSup, float minConf , String directorio, Principal principal){
+    public Apriori(float minSup, float minConf , String directorio){
         this.minSupAp = minSup/100;
         this.minConfAp = minConf/100;
         this.directorio = directorio;
     }
 
     public void correrAlgoritmo(){           
-        LeeFichero r = new LeeFichero(directorio); 
-        List<Regla> reglas;
+        LeeFichero r = new LeeFichero(directorio);        
         r.generarListas();
         numerico = r.numerico;
         List<Elemento> elementosPri = pasadaInicial(r.getTrans(), r.getUnicos());        
         frec = new Frecuente();        
         List<Elemento> elementosFrecuentes = frec.genFrecuentesInicial(elementosPri, minSupAp, r.CanTrans);       
-        paraKveces(elementosFrecuentes,r.getTrans(),r.CanTrans);        
-        generarReglas(frec, r.CanTrans, numerico); 
+        paraKveces(elementosFrecuentes,r.getTrans(),r.CanTrans); 
+        System.out.println("*********FRECUENTEs: ****************1");
+        for (int i=0;i<frec.frecuentes.size();i++){
+            for (int j=0;j<frec.frecuentes.get(i).size();j++){
+                System.out.println(frec.frecuentes.get(i).get(j).getDescripcion()+" @desc "
+                +frec.frecuentes.get(i).get(j).getCantidad());
+            }
+        }           
+        generarReglas(frec, r.CanTrans, numerico);        
+        for (int p=0;p<reglasFinales.size();p++){
+                System.out.println(reglasFinales.get(p).antecedentes+" -> "+            
+                                   reglasFinales.get(p).consecuentes+
+                                   " confianza: "+ reglasFinales.get(p).getConfianza());            
+            }        
     }
     
     public List<Elemento> pasadaInicial(List<List<String>> transacciones, List<String> unicos  ){
@@ -55,22 +67,15 @@ public class Apriori {
             }
             candidatosIniciales.add(elemento);
         }
-        for (int i = 0;i< candidatosIniciales.size(); i++) {
-            System.out.println("elem candidato inicial"+" "+candidatosIniciales.get(i).getDescripcion()+" cant ocurrencia "+candidatosIniciales.get(i).getCantidad());
-        }
         //6 - Devolver la lista de candidatos
         return candidatosIniciales;
     }   
    
     public boolean poda(String[] stEntrada,List<Elemento> listaDeFrecuentes, int k ){
-       //new SubConjunto(stEntrada, k-1);
         printCombination(stEntrada, stEntrada.length, k-1);
         aux.clear();
         data = null;
         data = aux.toArray(new String[aux.size()]);
-        for (int i = 0; i < data.length; i++){
-            System.out.println(data[i]+" aux");
-        }
         boolean bandera = true;
         for(int i=0; i<data.length;i++){            
             if(!validarExiste(listaDeFrecuentes,data[i])){
@@ -83,7 +88,7 @@ public class Apriori {
     public boolean validarExiste (List<Elemento> elementos, String e){
         for (Elemento elemento:elementos)
             {
-                System.out.println("ValidarExiste "+ elemento.getDescripcion()+"/"+e);
+                //System.out.println("ValidarExiste "+ elemento.getDescripcion()+"/"+e);
                 if(elemento.getDescripcion().equalsIgnoreCase(e))
                 {                    
                     return true;
@@ -100,10 +105,7 @@ public class Apriori {
 //            2 - Tomar segundo elemento freceuente k-1        
             String [] str1 = listaDeFrecuentes.get(i).getDescripcion().split(" ");                 
             for (int j=i+1;j<listaDeFrecuentes.size();j++){                    
-                String [] str2 = listaDeFrecuentes.get(j).Descripcion.split(" ");
-                System.out.println("-----------------");
-                System.out.println("String de str1: "+String.join(" ", str1));
-                System.out.println("String de str2: "+String.join(" ", str2));
+                String [] str2 = listaDeFrecuentes.get(j).Descripcion.split(" ");               
                 if (k==2 ){                        
                     stSalida [k-2] = str1[0];
                     stSalida [k-1] = str2[0];
@@ -112,6 +114,7 @@ public class Apriori {
                     elemento.setCantidad(0);
                     elemento.obtenerFrecuencia(transacciones,stSalida);                        
                     candidatosK.add(elemento);
+                    //System.out.println("Prueba eve - elemento de salida: "+String.join(" ", stSalida)); 
                 }else{
                     boolean bandera = true;
         //          3 - Comparar los primernos k-1 elementos
@@ -120,7 +123,7 @@ public class Apriori {
         //           4 - Si son iguales, crear nuevo elemento y agregarlo
                         if(str1[n].equals(str2[n])){
                             stSalida [n] = str1[n];                                
-                            System.out.println("compara igual "+str1[n]+" "+(str2[n])+"stSalida:"+stSalida[n]);
+                            //System.out.println("compara igual "+str1[n]+" "+(str2[n])+"stSalida:"+stSalida[n]);
                         }                        
         //            5 - Si no son iguales, obtener siguiente
                         else {bandera = false;}
@@ -128,13 +131,12 @@ public class Apriori {
                         }
                         if(bandera){                                
                             stSalida [k-2] = str1 [str1.length-1];                                
-                            stSalida [k-1] = str2 [str2.length-1];
-                            System.out.println("st Salida "+String.join(" ", stSalida));
+                            stSalida [k-1] = str2 [str2.length-1];                            
                             String salida = String.join(" ", stSalida);
                             if (poda(stSalida,listaDeFrecuentes,k)){
                                 Elemento elemento = new Elemento(salida);
                                 elemento.obtenerFrecuencia(transacciones,stSalida);
-                                candidatosK.add(elemento);                               
+                                candidatosK.add(elemento);                                
                             }
                         }                       
                     } 
@@ -143,14 +145,13 @@ public class Apriori {
         return candidatosK;
     }    
     
-    public List <Elemento> paraKveces(List<Elemento> listaDeFrecuentes, List<List<String>> transacciones, int canTrans){
+    public List<Elemento> paraKveces(List<Elemento> listaDeFrecuentes, List<List<String>> transacciones, int canTrans){
         boolean bandera = true;
         List<Elemento> listaFrecuentes;
         int k=2;
         List <Elemento> elementosCandidatosk = null;
         listaFrecuentes = listaDeFrecuentes;
         while(bandera){  
-            //System.out.println("muestra k  "+k);
             elementosCandidatosk = genCandidatosFk(listaFrecuentes, k, transacciones);            
             listaFrecuentes = frec.genFrencuentesK(elementosCandidatosk,minSupAp, canTrans);                
             //frec.frecuentes.add(listaFrecuentes);                                               
@@ -158,12 +159,7 @@ public class Apriori {
                 bandera=false;
             }                
             k++;
-        }
-        for(int i=0; i<frec.frecuentes.size();i++){
-            for(int j=0;j<frec.frecuentes.get(i).size();j++){   
-                System.out.println("cant de frec frecuetnes "+frec.frecuentes.get(i).get(j).getDescripcion());
-            }
-        }           
+        }          
         return elementosCandidatosk;    
     }
     
@@ -171,9 +167,9 @@ public class Apriori {
         // Current combination is ready to be printed, print it
         if (index == r){
             for (int j=0; j<r; j++)
-                System.out.print(data1[j]+"");
+                //System.out.print(data1[j]+"");
                 aux.add(String.join(" ", data1));
-                System.out.println("");
+                //System.out.println("");
         return ;
         }
         // When no more elements are there to put in data[]
@@ -197,51 +193,45 @@ public class Apriori {
         return;
     }
     
-    public List <Regla> generarReglas (Frecuente frec, int canTrans, boolean flagNum){        
-        List <Regla> reglasUnConsecuente = new ArrayList<>();
-        List <List<String>> h1 = new ArrayList<>();
-        List <String> unicos = new ArrayList<>();
+    public void generarReglas (Frecuente frec, int canTrans, boolean flagNum){        
+        List <Regla> reglasUnConsecuente = new ArrayList<Regla>();
+          List <String> unicos = new ArrayList<String>(); //lista UNICOS es H1 
+    
         
-        for (int i=1;i<frec.getFrecuentes().size();i++){      //i=1 porque tengo que tener en cuenta a partir de k=2            
-         
+        for (int i=1;i<frec.getFrecuentes().size()-1;i++){      //i=1 porque tengo que tener en cuenta a partir de k=2         
+             
             for (int j=0;j<frec.getFrecuentes().get(i).size();j++){                
-                String [] aux = frec.getFrecuentes().get(i).get(j).getDescripcion().split(" ");                             
-                
-                for (int k=0;k<aux.length;k++){
+                String [] aux = frec.getFrecuentes().get(i).get(j).getDescripcion().split(" ");   
+                 System.out.println("split del comienzo de generar reglas: "+ aux[0]+ "  j:::"+j+ i);
+                for (int u=aux.length-1;u>-1;u--){
                     Regla regla = new Regla();
-                    regla.consecuentes.add(aux[k]);
-                    System.out.println("cons:"+ aux[k]);                    
-                    
-                    for (int m=0;m<aux.length;m++){
-                        if (!aux[k].equalsIgnoreCase(aux[m])){
-                            regla.antecedentes.add(aux[m]);
-                            System.out.println("ant:"+ aux[m]);
+                    regla.consecuentes.add(aux[u]);                                    
+                    for (int s=aux.length-1;s>-1;s--){
+                        if (!aux[u].equalsIgnoreCase(aux[s])){
+                            regla.antecedentes.add(aux[s]);
+                            
                         }                                        
                     }
                         // Método que calcula la confianza y soporte
-                    regla.calcularConfSup(frec.getFrecuentes().get(i-1),regla.antecedentes.get(0),canTrans, frec.getFrecuentes().get(i).get(j).getCantidad());
+                    Collections.sort(regla.antecedentes);
+                    System.out.println("################################################"+ regla.antecedentes.get(0));
+                    regla.calcularConfSup(String.join(" ", aux),frec.getFrecuentes().get(i).get(j).getCantidad(),frec.getFrecuentes().get(i-1),regla.antecedentes,canTrans,frec.frecuentes,i);                    
+                    
                     if(regla.getConfianza()>=minConfAp){
-                        System.out.println("regla.getConfianza() "+regla.getConfianza() );
                         reglasUnConsecuente.add(regla);
-                        /*if (!h1.contains(regla.getConsecuentes())){
-                             h1.add(regla.getConsecuentes());                             
-                        }*/
+                        reglasFinales.add(regla); 
                         for (int y=0;y<regla.getConsecuentes().size();y++){
+                          
                             if (!unicos.contains(regla.getConsecuentes().get(y))){                                
-                                unicos.add(regla.getConsecuentes().get(y));                                
+                                unicos.add(regla.getConsecuentes().get(y));  
+
                             }
                         }
                     }                   
-                }                      
-            }
-            for (int p=0;p<reglasUnConsecuente.size();p++){  
-                System.out.println(reglasUnConsecuente.get(p).antecedentes+" -> "+            
-                                   reglasUnConsecuente.get(p).consecuentes);
-            lista1 = reglasUnConsecuente;
-            
-            }
-            
-            if(flagNum){    
+                }                            
+            } 
+            lista1 = reglasUnConsecuente; //-----------------reglasUnConsecuente o reglas Finales
+             if(flagNum){    
                 List <Integer> unAux = new ArrayList<Integer>();
                 for (int p=0;p<unicos.size();p++){                    
                     int unNumAux = Integer.parseInt(unicos.get(p));
@@ -252,61 +242,95 @@ public class Apriori {
                     List <String> listAux = new ArrayList<String>();                    
                     String auxStr = unAux.get(p).toString();
                     listAux.add(auxStr);
-                    h1.add(listAux);
+                    unicos.add(auxStr);
                 }
             }        
-            
-            apGenRules(frec.frecuentes.get(i),h1, i);  
-        }       
-        
-        return reglasUnConsecuente;
+            int m=1;
+            apGenRules(frec.getFrecuentes().get(i),unicos, i,canTrans, m,frec.frecuentes);
+           unicos.clear();
+        }                  
     }
        
-    public void apGenRules(List<Elemento> frecuentes, List<List<String>> hm, int i) {                                                      
-        for (int r=0;r<hm.size();r++){
-            System.out.println("Hm "+r+" : "+hm.get(r));
-        }
+    public void apGenRules(List<Elemento> frecuentes, List<String> h1, int i, int CanTrans, int m, List<List<Elemento>> f) {                                                      
+        Collections.sort(h1);
+        System.out.println("kkkkkkkkkkkkkk AP-GEN RULE::::::::"+h1+"  m  "+m+i);
         int k = i+1;
-        int m = 1;        
-        List<List<String>> hmSig = new ArrayList<List<String>>();        
-        //hm = h;
-        if ((k>m+1)&&!hm.isEmpty()) {
-             hmSig = genCandidatosHm(hm);
-             for(int z=0;z<hmSig.size();z++){
-                 //calcular conf
-                 //controlar si conf es mayor a minConfAp
-                 //si se cumple genero la regla
-                        //calculo sup y confianza le asigno conf
-                 //sino elimino el subset de hmSig
-                 //volver a llamar a apGenRule
-                }
-        }
-        apGenRules(frecuentes, hmSig, i);
-    }
-    
-    public List<List<String>> genCandidatosHm(List<List<String>> hm) {
-        List<List<String>> hmMasUno = new ArrayList<List<String>>();
-        //Hacer un producto cartesiano de hm x hm                
-        System.out.println("tamaño de hm: "+hm.size());
-        for (int x=0;x<hm.size();x++){
-            
-            if (hm.get(x).size()==1){
-                for (int y=x+1;y<hm.size();y++){                                                           
-                    List<String> stSalida = new ArrayList<String>();                    
-                    stSalida.add(hm.get(x).get(0));
-                    stSalida.add(hm.get(y).get(0));
-                    //System.out.println("Salida: "+stSalida);
-                    if(!hmMasUno.contains(stSalida)){ 
-                         hmMasUno.add(stSalida); }                   
-                }                        
+        //1 - Comprobar que k>m+1, y Hm <> 0
+        if ((k>m+1)&&!h1.isEmpty()) {               
+            List<String> hNuevo = new ArrayList<String>();
+            hNuevo = genCandidatosHm(h1);
+                for (int o=0;o<hNuevo.size();o++){  
+                for (int y=0;y<frecuentes.size();y++){                    
+                    System.out.println("Homero "+frecuentes.get(y).getDescripcion());
+                    Auxiliar aux = new Auxiliar (hNuevo.get(o),frecuentes.get(y).getDescripcion());
+                    if(aux.contieneElemento()){
+                        Regla regla = new Regla();
+                        regla.consecuentes = aux.auxHfrec;
+                        regla.antecedentes = aux.diferencia();
+                        System.out.println("antece--------- "+regla.antecedentes+" "+regla.consecuentes);
+                        regla.calcularConfSup(frecuentes.get(y).getDescripcion(),frecuentes.get(y).getCantidad(),frec.getFrecuentes().get(i-1),regla.antecedentes,CanTrans,f,k);                    
+                        
+                        if(regla.getConfianza()>=minConfAp){
+                            reglasFinales.add(regla);
+                        }                                  
+                }                       
             }
-            else{System.out.println("deberia generar x -> xx");}
+        }  
+                apGenRules(frec.getFrecuentes().get(i),hNuevo, i,CanTrans,m+1,frec.frecuentes);
         }
-        
-                
-        /*for (int o=0;o<hmMasUno.size();o++){                        
-            System.out.println("{"+hmMasUno.get(o)+"}");            
-        }*/ 
-        return hmMasUno;
+    }    
+
+    public List<String> genCandidatosHm(List<String> hm) {
+        List<String> hmMasUno = new ArrayList<String>();
+        //Hacer un producto cartesiano de hm x hm                      
+        String [] auxSt = hm.get(0).split(" ");
+        if (auxSt.length == 1){
+            for (int x=0;x<hm.size();x++){
+                for (int y=x+1;y<hm.size();y++){
+                    String [] auxAnt = new String[2];
+                    auxAnt[0] = hm.get(x); auxAnt[1] = hm.get(y);                    
+                    String auxAntSt = String.join(" ", auxAnt);
+                    if(!hmMasUno.contains(auxAntSt)){hmMasUno.add(auxAntSt);}
+                }
+            }                                                
+        }else{            
+            int t = auxSt.length+1; 
+            String [] stSalida = new String[t];
+            for (int x=0;x<hm.size();x++){
+               String [] auxSt1 = hm.get(x).split(" ");
+               //System.out.println("Primero esto "+String.join(" ", auxSt1));
+               for (int y=x+1;y<hm.size();y++){
+                    String [] auxSt2 = hm.get(y).split(" ");
+                   
+                    boolean bandera = true;        
+                    int n=0;                          
+                    while (bandera && n<=(auxSt1.length-2)){        
+                        if(auxSt1[n].equals(auxSt2[n])){
+                            stSalida [n] = auxSt1[n];  
+                             
+                        }                        
+                        else {bandera = false;}
+                        n++;
+                        }
+                        if(bandera){  
+                            stSalida [t-2] = auxSt1[auxSt1.length-1];                                
+                            stSalida [t-1] = auxSt2[auxSt2.length-1]; 
+                            
+                            String salida = String.join(" ", stSalida);
+                            //System.out.println("Entro nae por acá "+salida);
+                            if(!hmMasUno.contains(salida)){hmMasUno.add(salida);}
+                            /*if (poda(stSalida,listaDeFrecuentes,k)){
+                                Elemento elemento = new Elemento(salida);
+                                elemento.obtenerFrecuencia(transacciones,stSalida);
+                                candidatosK.add(elemento);                                
+                            }*/
+                        }                                                                                                                                                                                                                 
+               }
+            }            
+        }
+        /*for(int i=0;i<hmMasUno.size();i++){
+            System.out.println("Resutado de la lista hm: "+hmMasUno.get(i));
+        }*/
+        return hmMasUno;   
     }
 }
