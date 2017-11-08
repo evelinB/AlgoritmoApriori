@@ -29,7 +29,7 @@ import javax.swing.SwingWorker;
 
 /**
  *
- * @author Eve
+ * @author 
  */
 public class ControladorPrincipal  {
     Principal principal;
@@ -41,7 +41,7 @@ public class ControladorPrincipal  {
     public ControladorPrincipal() {
         principal = new Principal();     
         new ControladorPanelPrimario(principal.panelPrimario, principal);
-        //new ControladorPanelSecundario(principal.panelSecundario, principal);
+        
         principal.setLocationRelativeTo(null);
         principal.setVisible(true);
         
