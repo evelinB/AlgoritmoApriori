@@ -17,8 +17,6 @@ public class Apriori {
     String [] data;
     ArrayList<String> aux = new ArrayList<>();
     boolean numerico;
-    public List<Regla>lista1;
-    public List<String>lista2;
     Principal principal;
     
     public Apriori(float minSup, float minConf , String directorio){
@@ -208,7 +206,7 @@ public class Apriori {
                     }                   
                 }                            
             } 
-            lista1 = reglasUnConsecuente; //-----------------reglasUnConsecuente o reglas Finales
+            
              if(flagNum){    
                 List <Integer> unAux = new ArrayList<Integer>();
                 for (int p=0;p<unicos.size();p++){                    
