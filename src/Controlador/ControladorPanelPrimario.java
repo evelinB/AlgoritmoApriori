@@ -64,9 +64,7 @@ public class ControladorPanelPrimario implements ActionListener, KeyListener{
             } catch (IOException ex) {
                 Logger.getLogger(ControladorPrincipal.class.getName()).log(Level.SEVERE, null, ex);
             }        
-    }
-     
-      
+    }         
 
     @Override
     public void actionPerformed(ActionEvent e) {

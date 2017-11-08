@@ -39,7 +39,6 @@ public class ControladorPanelSecundario implements ActionListener{
 
     public ControladorPanelSecundario(Principal principal) {
         this.principal=principal;         
-        principal.panelSecundario.volver.addActionListener(this);
     }
     
     public void cargarListas( List<Regla> lista){
@@ -51,18 +50,16 @@ public class ControladorPanelSecundario implements ActionListener{
               principal.panelSecundario.panel2.add(icono);
                principal.panelSecundario.panel2.add(consecuente);
          } 
-           BoxLayout boxLayout = new BoxLayout( this.principal.panelSecundario.panel2, BoxLayout.Y_AXIS);
+          // BoxLayout boxLayout = new BoxLayout( this.principal.panelSecundario.panel2, BoxLayout.Y_AXIS);
            principal.panelSecundario.panel2.setLayout(new GridLayout(lista.size(), 3));
            principal.panelSecundario.reglas.setText(String.valueOf(lista.size()));
+           principal.panelSecundario.soporte.setText(principal.panelPrimario.Soportetxf.getText());
+           principal.panelSecundario.confianza.setText(principal.panelPrimario.confianzatxf.getText());
          }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-          if(e.getSource()==principal.panelSecundario.volver){
-              principal.panelSecundario.panel2.removeAll();
-              CardLayout cl = (CardLayout) principal.Contenedor.getLayout();
-              cl.show(principal.Contenedor,"card2");
-          }
+         
     }
     
     class Synchronizer implements AdjustmentListener

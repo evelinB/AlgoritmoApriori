@@ -5,7 +5,6 @@ import java.util.Comparator;
 import java.util.List;
 
     public class Elemento {
-        //List<Integer> Descripcion = new ArrayList<Integer>();
         String Descripcion;
         int Cantidad = 0;
                    
@@ -43,14 +42,11 @@ import java.util.List;
                     }
                     j++;
                 }             
-                //3 - Si está en la transacción, cpontar+
-                if (pos==stSalida.length){//Comprueba que encuentra TODOS los eltos. en la transaccion n
+                //3 - Si está en la transacción, cuenta uno más
+                if (pos==stSalida.length){
                     this.setCantidad(this.getCantidad()+1);
                 }
             }
-        //4 - Sino, obtener la siguiente transaccion     
         }                          
     }
-    
-    
 }

@@ -17,16 +17,12 @@ public class Frecuente {
         List<Elemento> elementosFrecuentesInicial = new ArrayList<Elemento>();
         for (int i=0;i<listaElementos.size();i++){
             Elemento unElemento = listaElementos.get(i); 
-            //System.out.println("Frec Inicial"+unElemento.getDescripcion());
             //2 - De ese elemento, obtener el soporte                 
             double soporte = (double)unElemento.getCantidad()/(double)cantTrans;
-            System.out.println(soporte);           
-            System.out.println(minSup);
             //3 - Comparar el soporte con minSup
             if (soporte>=minSup) {
                 //4 - Si es mayor o igual lo agrega a frecuentes1                
                 elementosFrecuentesInicial.add(unElemento);        
-                //System.out.println("ver"+elementosFrecuentesInicial);
             }
             //5 - Sino, obtener siguiente elemento            
         }
@@ -45,7 +41,6 @@ public class Frecuente {
             if (soporte>=minSup) {
                 //4 - Si es mayor o igual lo agrega a frecuentes1                
                 elementosFrecuentesInicial.add(unElemento);                 
-                //System.out.println("cumplen minsup:"+unElemento.getDescripcion());
             }
             //5 - Sino, obtener siguiente elemento            
         }

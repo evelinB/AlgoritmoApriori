@@ -35,19 +35,8 @@ public class Apriori {
         frec = new Frecuente();        
         List<Elemento> elementosFrecuentes = frec.genFrecuentesInicial(elementosPri, minSupAp, r.CanTrans);       
         paraKveces(elementosFrecuentes,r.getTrans(),r.CanTrans); 
-        System.out.println("*********FRECUENTEs: ****************1");
-        for (int i=0;i<frec.frecuentes.size();i++){
-            for (int j=0;j<frec.frecuentes.get(i).size();j++){
-                System.out.println(frec.frecuentes.get(i).get(j).getDescripcion()+" @desc "
-                +frec.frecuentes.get(i).get(j).getCantidad());
-            }
-        }           
         generarReglas(frec, r.CanTrans, numerico);        
-        for (int p=0;p<reglasFinales.size();p++){
-                System.out.println(reglasFinales.get(p).antecedentes+" -> "+            
-                                   reglasFinales.get(p).consecuentes+
-                                   " confianza: "+ reglasFinales.get(p).getConfianza());            
-            }        
+              
     }
     
     public List<Elemento> pasadaInicial(List<List<String>> transacciones, List<String> unicos  ){
@@ -88,7 +77,7 @@ public class Apriori {
     public boolean validarExiste (List<Elemento> elementos, String e){
         for (Elemento elemento:elementos)
             {
-                //System.out.println("ValidarExiste "+ elemento.getDescripcion()+"/"+e);
+              
                 if(elemento.getDescripcion().equalsIgnoreCase(e))
                 {                    
                     return true;
@@ -109,12 +98,12 @@ public class Apriori {
                 if (k==2 ){                        
                     stSalida [k-2] = str1[0];
                     stSalida [k-1] = str2[0];
-                    //System.out.println("String de salida: "+Arrays.toString(stSalida));                        
+                                         
                     Elemento elemento = new Elemento(String.join(" ", stSalida));  
                     elemento.setCantidad(0);
                     elemento.obtenerFrecuencia(transacciones,stSalida);                        
                     candidatosK.add(elemento);
-                    //System.out.println("Prueba eve - elemento de salida: "+String.join(" ", stSalida)); 
+                    
                 }else{
                     boolean bandera = true;
         //          3 - Comparar los primernos k-1 elementos
@@ -123,7 +112,7 @@ public class Apriori {
         //           4 - Si son iguales, crear nuevo elemento y agregarlo
                         if(str1[n].equals(str2[n])){
                             stSalida [n] = str1[n];                                
-                            //System.out.println("compara igual "+str1[n]+" "+(str2[n])+"stSalida:"+stSalida[n]);
+                           
                         }                        
         //            5 - Si no son iguales, obtener siguiente
                         else {bandera = false;}
@@ -154,7 +143,7 @@ public class Apriori {
         while(bandera){  
             elementosCandidatosk = genCandidatosFk(listaFrecuentes, k, transacciones);            
             listaFrecuentes = frec.genFrencuentesK(elementosCandidatosk,minSupAp, canTrans);                
-            //frec.frecuentes.add(listaFrecuentes);                                               
+                       
             if (frec.frecuentes.get(k-1).isEmpty()){
                 bandera=false;
             }                
@@ -167,29 +156,20 @@ public class Apriori {
         // Current combination is ready to be printed, print it
         if (index == r){
             for (int j=0; j<r; j++)
-                //System.out.print(data1[j]+"");
                 aux.add(String.join(" ", data1));
-                //System.out.println("");
         return ;
         }
-        // When no more elements are there to put in data[]
         if (i >= n)
         return;
-        // current is included, put next at next location
+        
         data1[index] = arr[i];
         combinationUtil(arr, n, r, index+1, data1, i+1);
-        // current is excluded, replace it with next (Note that
-        // i+1 is passed, but index is not changed)
         combinationUtil(arr, n, r, index, data1, i+1);
     }
-	// The main function that prints all combinations of size r
-	// in arr[] of size n. This function mainly uses combinationUtil()
-    
+	
     public void printCombination(String arr[], int n, int r){
-        // A temporary array to store all combination one by one
-        String data1[] = new String[r];
-        // Print all combination using temprary array 'data[]'
-        combinationUtil(arr, n, r, 0, data1, 0);
+       String data1[] = new String[r];
+       combinationUtil(arr, n, r, 0, data1, 0);
         return;
     }
     
@@ -202,19 +182,17 @@ public class Apriori {
              
             for (int j=0;j<frec.getFrecuentes().get(i).size();j++){                
                 String [] aux = frec.getFrecuentes().get(i).get(j).getDescripcion().split(" ");   
-                 System.out.println("split del comienzo de generar reglas: "+ aux[0]+ "  j:::"+j+ i);
                 for (int u=aux.length-1;u>-1;u--){
                     Regla regla = new Regla();
                     regla.consecuentes.add(aux[u]);                                    
                     for (int s=aux.length-1;s>-1;s--){
                         if (!aux[u].equalsIgnoreCase(aux[s])){
                             regla.antecedentes.add(aux[s]);
-                            
                         }                                        
                     }
                         // Método que calcula la confianza y soporte
                     Collections.sort(regla.antecedentes);
-                    System.out.println("################################################"+ regla.antecedentes.get(0));
+                    
                     regla.calcularConfSup(String.join(" ", aux),frec.getFrecuentes().get(i).get(j).getCantidad(),frec.getFrecuentes().get(i-1),regla.antecedentes,canTrans,frec.frecuentes,i);                    
                     
                     if(regla.getConfianza()>=minConfAp){
@@ -238,6 +216,7 @@ public class Apriori {
                     unAux.add(unNumAux);                    
                 }
                 Collections.sort(unAux);
+                unicos.clear();
                 for (int p=0;p<unAux.size();p++){                    
                     List <String> listAux = new ArrayList<String>();                    
                     String auxStr = unAux.get(p).toString();
@@ -253,29 +232,27 @@ public class Apriori {
        
     public void apGenRules(List<Elemento> frecuentes, List<String> h1, int i, int CanTrans, int m, List<List<Elemento>> f) {                                                      
         Collections.sort(h1);
-        System.out.println("kkkkkkkkkkkkkk AP-GEN RULE::::::::"+h1+"  m  "+m+i);
+        
         int k = i+1;
         //1 - Comprobar que k>m+1, y Hm <> 0
         if ((k>m+1)&&!h1.isEmpty()) {               
             List<String> hNuevo = new ArrayList<String>();
             hNuevo = genCandidatosHm(h1);
                 for (int o=0;o<hNuevo.size();o++){  
-                for (int y=0;y<frecuentes.size();y++){                    
-                    System.out.println("Homero "+frecuentes.get(y).getDescripcion());
-                    Auxiliar aux = new Auxiliar (hNuevo.get(o),frecuentes.get(y).getDescripcion());
-                    if(aux.contieneElemento()){
-                        Regla regla = new Regla();
-                        regla.consecuentes = aux.auxHfrec;
-                        regla.antecedentes = aux.diferencia();
-                        System.out.println("antece--------- "+regla.antecedentes+" "+regla.consecuentes);
-                        regla.calcularConfSup(frecuentes.get(y).getDescripcion(),frecuentes.get(y).getCantidad(),frec.getFrecuentes().get(i-1),regla.antecedentes,CanTrans,f,k);                    
-                        
-                        if(regla.getConfianza()>=minConfAp){
-                            reglasFinales.add(regla);
-                        }                                  
-                }                       
-            }
-        }  
+                    for (int y=0;y<frecuentes.size();y++){                    
+                        Auxiliar aux = new Auxiliar (hNuevo.get(o),frecuentes.get(y).getDescripcion());
+                        if(aux.contieneElemento()){
+                            Regla regla = new Regla();
+                            regla.consecuentes = aux.auxHfrec;
+                            regla.antecedentes = aux.diferencia();
+                            regla.calcularConfSup(frecuentes.get(y).getDescripcion(),frecuentes.get(y).getCantidad(),frec.getFrecuentes().get(i-1),regla.antecedentes,CanTrans,f,k);                    
+
+                            if(regla.getConfianza()>=minConfAp){
+                                reglasFinales.add(regla);
+                            }                                  
+                        }                       
+                    }
+                }  
                 apGenRules(frec.getFrecuentes().get(i),hNuevo, i,CanTrans,m+1,frec.frecuentes);
         }
     }    
@@ -298,16 +275,13 @@ public class Apriori {
             String [] stSalida = new String[t];
             for (int x=0;x<hm.size();x++){
                String [] auxSt1 = hm.get(x).split(" ");
-               //System.out.println("Primero esto "+String.join(" ", auxSt1));
-               for (int y=x+1;y<hm.size();y++){
-                    String [] auxSt2 = hm.get(y).split(" ");
-                   
-                    boolean bandera = true;        
+                for (int y=x+1;y<hm.size();y++){
+                   String [] auxSt2 = hm.get(y).split(" ");
+                   boolean bandera = true;        
                     int n=0;                          
                     while (bandera && n<=(auxSt1.length-2)){        
                         if(auxSt1[n].equals(auxSt2[n])){
                             stSalida [n] = auxSt1[n];  
-                             
                         }                        
                         else {bandera = false;}
                         n++;
@@ -317,20 +291,42 @@ public class Apriori {
                             stSalida [t-1] = auxSt2[auxSt2.length-1]; 
                             
                             String salida = String.join(" ", stSalida);
-                            //System.out.println("Entro nae por acá "+salida);
-                            if(!hmMasUno.contains(salida)){hmMasUno.add(salida);}
-                            /*if (poda(stSalida,listaDeFrecuentes,k)){
-                                Elemento elemento = new Elemento(salida);
-                                elemento.obtenerFrecuencia(transacciones,stSalida);
-                                candidatosK.add(elemento);                                
-                            }*/
+                            if(podaHm(stSalida,hm,t)){
+                                if(!hmMasUno.contains(salida)){hmMasUno.add(salida);}
+                            }
+                            
+                            
                         }                                                                                                                                                                                                                 
-               }
+                }
             }            
         }
-        /*for(int i=0;i<hmMasUno.size();i++){
-            System.out.println("Resutado de la lista hm: "+hmMasUno.get(i));
-        }*/
-        return hmMasUno;   
+       return hmMasUno;   
     }
+    
+    public boolean podaHm(String[] stEntrada,List<String> hm, int k ){
+        printCombination(stEntrada, stEntrada.length, k-1);
+        aux.clear();
+        data = null;
+        data = aux.toArray(new String[aux.size()]);
+        boolean bandera = true;
+        for(int i=0; i<data.length;i++){            
+            if(!validarExisteHm(hm,data[i])){
+                bandera = false;
+            }
+        }
+        return bandera;
+    }
+    
+    public boolean validarExisteHm (List<String> elementos, String e){
+        for (String palabra:elementos)
+            {
+                if(palabra.equalsIgnoreCase(e))
+                {                    
+                    return true;
+                }
+            }
+        return false;
+    }
+    
+    
 }

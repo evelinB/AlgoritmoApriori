@@ -60,7 +60,7 @@ class LeeFichero {
                 transacciones.add(itemSet);
             }
             Collections.sort(unicos);            
-            System.out.println("Cantidad de transacciones: "+CanTrans);
+            //System.out.println("Cantidad de transacciones: "+CanTrans);
             
             if(numerico){
                 transacciones.clear();
