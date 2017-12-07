@@ -66,7 +66,10 @@ public class Regla {
                     }else{
                             this.setConfianza(xCount);
                     }
-                    auxSup = cantidad/canTrans;
+                    System.out.println("Cantidad: "+cantidad);
+                    System.out.println("CanTans: "+canTrans);
+                    auxSup = xyCount/canTrans;
+                    System.out.println("resul: "+auxSup);
                     this.setSoporte(auxSup);
     }
     

@@ -11,7 +11,7 @@ import java.util.List;
 public class Apriori {   
     float minSupAp;
     float minConfAp;
-    String directorio;
+    String directorio="";
     Frecuente frec;
     public List<Regla> reglasFinales = new ArrayList<Regla>();
     String [] data;
@@ -25,17 +25,16 @@ public class Apriori {
         this.directorio = directorio;
     }
 
-    public void correrAlgoritmo(){           
+    public void correrAlgoritmo(){    
         LeeFichero r = new LeeFichero(directorio);        
         r.generarListas();
         numerico = r.numerico;
-        List<Elemento> elementosPri = pasadaInicial(r.getTrans(), r.getUnicos());        
+        List<Elemento> elementosPri  = pasadaInicial(r.getTrans(), r.getUnicos());        
         frec = new Frecuente();        
-        List<Elemento> elementosFrecuentes = frec.genFrecuentesInicial(elementosPri, minSupAp, r.CanTrans);       
+        List<Elemento> elementosFrecuentes  = frec.genFrecuentesInicial(elementosPri, minSupAp, r.CanTrans);       
         paraKveces(elementosFrecuentes,r.getTrans(),r.CanTrans); 
         generarReglas(frec, r.CanTrans, numerico);        
-              
-    }
+     }
     
     public List<Elemento> pasadaInicial(List<List<String>> transacciones, List<String> unicos  ){
         ArrayList<Elemento> candidatosIniciales = new ArrayList<Elemento>();
@@ -171,7 +170,9 @@ public class Apriori {
         return;
     }
     
-    public void generarReglas (Frecuente frec, int canTrans, boolean flagNum){        
+    public void generarReglas (Frecuente frec, int canTrans, boolean flagNum){ 
+       
+         System.out.println(reglasFinales.size()+"size--------------------------------------");
         List <Regla> reglasUnConsecuente = new ArrayList<Regla>();
           List <String> unicos = new ArrayList<String>(); //lista UNICOS es H1 
     

@@ -30,24 +30,21 @@ public class PanelPrimario extends javax.swing.JPanel {
         barraProgreso = new javax.swing.JProgressBar();
         calcularReglas = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
-        Soportetxf = new javax.swing.JFormattedTextField();
-        confianzatxf = new javax.swing.JFormattedTextField();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         path = new javax.swing.JTextField();
         seleccionarBtn = new javax.swing.JButton();
+        ayudaSoporte = new javax.swing.JButton();
+        soporteTxf = new javax.swing.JTextField();
+        confianzaTxf = new javax.swing.JTextField();
 
         calcularReglas.setText("Calcular Reglas");
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Datos iniciales"));
 
-        Soportetxf.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("###"))));
+        jLabel1.setText("Ingrese valor para Soporte");
 
-        confianzatxf.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("###"))));
-
-        jLabel1.setText("Soporte");
-
-        jLabel2.setText("Confianza");
+        jLabel2.setText("Ingrese valor para la Confianza");
 
         path.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -59,6 +56,22 @@ public class PanelPrimario extends javax.swing.JPanel {
         seleccionarBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 seleccionarBtnActionPerformed(evt);
+            }
+        });
+
+        ayudaSoporte.setText("?");
+        ayudaSoporte.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ayudaSoporteActionPerformed(evt);
+            }
+        });
+
+        soporteTxf.setToolTipText("<html>\n<body>\n<p style=\"color:red;\" >El valor del Soporte debe estar comprendido entre 1 y 100</p>\n</body>\n</html>");
+
+        confianzaTxf.setToolTipText("<html>\n<body>\n<p style=\"color:red;\" >El valor de la Confianza debe ser mayor al valor del soporte y menor a 100</p>\n</body>\n</html>");
+        confianzaTxf.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                confianzaTxfActionPerformed(evt);
             }
         });
 
@@ -76,29 +89,32 @@ public class PanelPrimario extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(seleccionarBtn)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(path)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(Soportetxf, javax.swing.GroupLayout.DEFAULT_SIZE, 57, Short.MAX_VALUE)
-                                    .addComponent(confianzatxf))
+                                .addComponent(soporteTxf, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(33, 33, 33)
+                                .addComponent(ayudaSoporte)
                                 .addGap(0, 0, Short.MAX_VALUE)))
-                        .addGap(10, 10, 10))))
+                        .addGap(10, 10, 10))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(seleccionarBtn)
+                            .addComponent(confianzaTxf, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(17, 17, 17)
+                .addGap(16, 16, 16)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(Soportetxf, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(ayudaSoporte)
+                    .addComponent(soporteTxf, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(confianzatxf, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2))
+                    .addComponent(jLabel2)
+                    .addComponent(confianzaTxf, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(path, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -146,16 +162,25 @@ public class PanelPrimario extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_seleccionarBtnActionPerformed
 
+    private void ayudaSoporteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ayudaSoporteActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_ayudaSoporteActionPerformed
+
+    private void confianzaTxfActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_confianzaTxfActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_confianzaTxfActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    public javax.swing.JFormattedTextField Soportetxf;
+    public javax.swing.JButton ayudaSoporte;
     public javax.swing.JProgressBar barraProgreso;
     public javax.swing.JButton calcularReglas;
-    public javax.swing.JFormattedTextField confianzatxf;
+    public javax.swing.JTextField confianzaTxf;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     public javax.swing.JTextField path;
     public javax.swing.JButton seleccionarBtn;
+    public javax.swing.JTextField soporteTxf;
     // End of variables declaration//GEN-END:variables
 }

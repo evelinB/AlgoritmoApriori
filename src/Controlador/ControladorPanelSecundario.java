@@ -5,6 +5,7 @@
  */
 package Controlador;
 
+import UI.PanelPrimario;
 import UI.PanelSecundario;
 import UI.Principal;
 import algoritmoapriori.Regla;
@@ -32,34 +33,45 @@ import javax.swing.JScrollPane;
 public class ControladorPanelSecundario implements ActionListener{
     
     PanelSecundario ps;
+    PanelPrimario pp = new PanelPrimario();
     Principal principal;
     List<Regla>reglas;
-     ImageIcon image = new ImageIcon("src/Imagenes/flecha.png");
+    ImageIcon image = new javax.swing.ImageIcon(getClass().getResource("/Imagenes/flecha.png"));
     
-
     public ControladorPanelSecundario(Principal principal) {
-        this.principal=principal;         
+        this.principal=principal;     
+        this.ps=principal.panelSecundario;
+        this.ps.volver.addActionListener(this);
     }
     
     public void cargarListas( List<Regla> lista){
         for (int i = 0; i < lista.size(); i++) {
           JLabel antecedente = new JLabel(""+lista.get(i).antecedentes);
           JLabel consecuente = new JLabel(lista.get(i).consecuentes+"");
+          String conf = Float.toString(lista.get(i).getConfianza());
+          JLabel confianza = new JLabel (conf);
+          String sup = Float.toString(lista.get(i).getSoporte());
+          JLabel soporte = new JLabel (sup);
             JLabel icono = new JLabel(image);
              principal.panelSecundario.panel2.add(antecedente);
               principal.panelSecundario.panel2.add(icono);
                principal.panelSecundario.panel2.add(consecuente);
+                principal.panelSecundario.panel2.add(confianza);
+                 principal.panelSecundario.panel2.add(soporte);
          } 
           // BoxLayout boxLayout = new BoxLayout( this.principal.panelSecundario.panel2, BoxLayout.Y_AXIS);
            principal.panelSecundario.panel2.setLayout(new GridLayout(lista.size(), 3));
            principal.panelSecundario.reglas.setText(String.valueOf(lista.size()));
-           principal.panelSecundario.soporte.setText(principal.panelPrimario.Soportetxf.getText());
-           principal.panelSecundario.confianza.setText(principal.panelPrimario.confianzatxf.getText());
+           principal.panelSecundario.soporte.setText(principal.panelPrimario.soporteTxf.getText());
+           principal.panelSecundario.confianza.setText(principal.panelPrimario.confianzaTxf.getText());
          }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-         
+         if(e.getSource()==ps.volver){
+           CardLayout cl = (CardLayout) principal.Contenedor.getLayout();
+           cl.show(principal.Contenedor,"card2");
+         }
     }
     
     class Synchronizer implements AdjustmentListener
