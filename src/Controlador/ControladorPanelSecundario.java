@@ -17,6 +17,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
+import java.awt.BorderLayout;
+import java.awt.Font;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 import java.util.List;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -44,31 +49,51 @@ public class ControladorPanelSecundario implements ActionListener{
         this.ps.volver.addActionListener(this);
     }
     
-    public void cargarListas( List<Regla> lista){
-        for (int i = 0; i < lista.size(); i++) {
-          JLabel antecedente = new JLabel(""+lista.get(i).antecedentes);
-          JLabel consecuente = new JLabel(lista.get(i).consecuentes+"");
-          String conf = Float.toString(lista.get(i).getConfianza());
-          JLabel confianza = new JLabel (conf);
-          String sup = Float.toString(lista.get(i).getSoporte());
-          JLabel soporte = new JLabel (sup);
-            JLabel icono = new JLabel(image);
-             principal.panelSecundario.panel2.add(antecedente);
-              principal.panelSecundario.panel2.add(icono);
-               principal.panelSecundario.panel2.add(consecuente);
-                principal.panelSecundario.panel2.add(confianza);
+    public void cargarListas( List<Regla> lista){               
+        for (int i = 0; i < lista.size(); i++) {          
+          JLabel numeroReg = new JLabel ("Regla nro: "+(i+1)+": ");
+          numeroReg.setForeground(Color.BLUE);
+          numeroReg.setFont(new Font("Calibri", Font.BOLD, 12));
+          
+          JLabel regla = new JLabel(lista.get(i).antecedentes.toString()+"  →  "+lista.get(i).consecuentes+"");
+          regla.setFont(new Font("Calibri", Font.BOLD, 12));
+          
+          Double sup = (double)lista.get(i).getSoporte()*100;
+          BigDecimal bd1 = new BigDecimal(sup);
+          bd1 = bd1.setScale(2,RoundingMode.HALF_UP);
+          JLabel soporte = new JLabel ("Sup: "+bd1+" %");
+          soporte.setForeground(Color.orange);
+          soporte.setFont(new Font("Calibri", Font.BOLD, 12));
+          
+          Double conf = (double)lista.get(i).getConfianza()*100;
+          BigDecimal bd2 = new BigDecimal(conf);
+          bd2 = bd2.setScale(2,RoundingMode.HALF_UP);
+          JLabel confianza = new JLabel ("Conf: "+bd2+" %");
+          confianza.setForeground(Color.gray);
+          confianza.setFont(new Font("Calibri", Font.BOLD, 12));          
+          
+          Double stLifft = (double)lista.get(i).getLlift();
+          BigDecimal bd3 = new BigDecimal(stLifft);
+          bd3 = bd3.setScale(2,RoundingMode.HALF_UP);
+          JLabel lift = new JLabel("Lift: "+bd3);          
+          lift.setFont(new Font("Calibri", Font.BOLD, 12));
+          
+            principal.panelSecundario.panel2.add(numeroReg);
+             principal.panelSecundario.panel2.add(regla);                             
                  principal.panelSecundario.panel2.add(soporte);
+                   principal.panelSecundario.panel2.add(confianza);
+                     principal.panelSecundario.panel2.add(lift);
          } 
           // BoxLayout boxLayout = new BoxLayout( this.principal.panelSecundario.panel2, BoxLayout.Y_AXIS);
            principal.panelSecundario.panel2.setLayout(new GridLayout(lista.size(), 3));
            principal.panelSecundario.reglas.setText(String.valueOf(lista.size()));
            principal.panelSecundario.soporte.setText(principal.panelPrimario.soporteTxf.getText());
-           principal.panelSecundario.confianza.setText(principal.panelPrimario.confianzaTxf.getText());
+           principal.panelSecundario.confianza.setText(principal.panelPrimario.confianzaTxf.getText());           
          }
-
     @Override
     public void actionPerformed(ActionEvent e) {
          if(e.getSource()==ps.volver){
+           principal.panelSecundario.panel2.removeAll();
            CardLayout cl = (CardLayout) principal.Contenedor.getLayout();
            cl.show(principal.Contenedor,"card2");
          }

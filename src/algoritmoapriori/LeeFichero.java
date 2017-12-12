@@ -20,6 +20,8 @@ class LeeFichero {
     }
 
     public void generarListas(){
+        transacciones.clear();
+        unicos.clear();
         File archivo = null;
         FileReader fr = null;
         BufferedReader br = null;        

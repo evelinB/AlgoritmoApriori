@@ -7,13 +7,14 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Random;
 
 public class Apriori {   
     float minSupAp;
     float minConfAp;
     String directorio="";
     Frecuente frec;
-    public List<Regla> reglasFinales = new ArrayList<Regla>();
+    public List<Regla> reglasFinales = new ArrayList<>();
     String [] data;
     ArrayList<String> aux = new ArrayList<>();
     boolean numerico;
@@ -23,17 +24,27 @@ public class Apriori {
         this.minSupAp = minSup/100;
         this.minConfAp = minConf/100;
         this.directorio = directorio;
+         this.frec = new Frecuente();
+        this.reglasFinales = new ArrayList<>();
     }
 
     public void correrAlgoritmo(){    
         LeeFichero r = new LeeFichero(directorio);        
         r.generarListas();
-        numerico = r.numerico;
-        List<Elemento> elementosPri  = pasadaInicial(r.getTrans(), r.getUnicos());        
+        numerico = r.numerico;   
+        //crear candidatos iniciales C1
+        List<Elemento> elementosPri  = pasadaInicial(r.getTrans(), r.getUnicos());  
+        
         frec = new Frecuente();        
+        //crea frecuentes de 1-itemset F1
         List<Elemento> elementosFrecuentes  = frec.genFrecuentesInicial(elementosPri, minSupAp, r.CanTrans);       
-        paraKveces(elementosFrecuentes,r.getTrans(),r.CanTrans); 
-        generarReglas(frec, r.CanTrans, numerico);        
+        //Crea candidatos y elementos frecuentes para k mayor a 2
+        paraKveces(elementosFrecuentes,r.getTrans(),r.CanTrans);
+        //genera lista con reglas
+        generarReglas(frec, r.CanTrans, numerico); 
+        Collections.sort(reglasFinales);
+        int cantReg = reglasFinales.size();
+        r = null;
      }
     
     public List<Elemento> pasadaInicial(List<List<String>> transacciones, List<String> unicos  ){
@@ -56,7 +67,7 @@ public class Apriori {
         //6 - Devolver la lista de candidatos
         return candidatosIniciales;
     }   
-   
+   //metodo que elimina los elementos de Fk que no estan el Fk-1
     public boolean poda(String[] stEntrada,List<Elemento> listaDeFrecuentes, int k ){
         printCombination(stEntrada, stEntrada.length, k-1);
         aux.clear();
@@ -82,7 +93,7 @@ public class Apriori {
             }
         return false;
     }
-    
+    // genera los candidatos Ck+1 a partir de Fk
     public List<Elemento> genCandidatosFk(List<Elemento> listaDeFrecuentes, int k, List<List<String>> transacciones) {
         List <Elemento> candidatosK = new ArrayList<Elemento>();
         String [] stSalida = new String [k];        
@@ -130,7 +141,7 @@ public class Apriori {
             }              
         return candidatosK;
     }    
-    
+    // Genera los elementos candidatos y frecuentes cuando k es mayor a 1
     public List<Elemento> paraKveces(List<Elemento> listaDeFrecuentes, List<List<String>> transacciones, int canTrans){
         boolean bandera = true;
         List<Elemento> listaFrecuentes;
@@ -138,7 +149,9 @@ public class Apriori {
         List <Elemento> elementosCandidatosk = null;
         listaFrecuentes = listaDeFrecuentes;
         while(bandera){  
-            elementosCandidatosk = genCandidatosFk(listaFrecuentes, k, transacciones);            
+            //llama al metodo que genera los candidatos
+            elementosCandidatosk = genCandidatosFk(listaFrecuentes, k, transacciones);   
+            //llama al metodo que genera los elementos frecuentes
             listaFrecuentes = frec.genFrencuentesK(elementosCandidatosk,minSupAp, canTrans);                
                        
             if (frec.frecuentes.get(k-1).isEmpty()){
@@ -148,9 +161,9 @@ public class Apriori {
         }          
         return elementosCandidatosk;    
     }
-    
+    //metodo utilizado en la PODA
     public void combinationUtil(String arr[], int n, int r, int index,String data1[], int i){           
-        // Current combination is ready to be printed, print it
+        
         if (index == r){
             for (int j=0; j<r; j++)
                 aux.add(String.join(" ", data1));
@@ -169,9 +182,9 @@ public class Apriori {
        combinationUtil(arr, n, r, 0, data1, 0);
         return;
     }
-    
+    // Metodos que genera las reglas a partir de los elementos frecuentes F
     public void generarReglas (Frecuente frec, int canTrans, boolean flagNum){ 
-       
+         reglasFinales.clear();
          System.out.println(reglasFinales.size()+"size--------------------------------------");
         List <Regla> reglasUnConsecuente = new ArrayList<Regla>();
           List <String> unicos = new ArrayList<String>(); //lista UNICOS es H1 
@@ -189,10 +202,10 @@ public class Apriori {
                             regla.antecedentes.add(aux[s]);
                         }                                        
                     }
-                        // Método que calcula la confianza y soporte
+                        
                     Collections.sort(regla.antecedentes);
-                    
-                    regla.calcularConfSup(String.join(" ", aux),frec.getFrecuentes().get(i).get(j).getCantidad(),frec.getFrecuentes().get(i-1),regla.antecedentes,canTrans,frec.frecuentes,i);                    
+                    // Método que calcula la confianza y soporte
+                    regla.calcularConfSup(String.join(" ", aux),frec.getFrecuentes().get(i).get(j).getCantidad(),frec.getFrecuentes().get(i-1),regla.antecedentes,regla.consecuentes,canTrans,frec.frecuentes,i);         
                     
                     if(regla.getConfianza()>=minConfAp){
                         reglasUnConsecuente.add(regla);
@@ -228,10 +241,9 @@ public class Apriori {
            unicos.clear();
         }                  
     }
-       
+       // Genera reglas con N antecedentes y M consecuentes
     public void apGenRules(List<Elemento> frecuentes, List<String> h1, int i, int CanTrans, int m, List<List<Elemento>> f) {                                                      
         Collections.sort(h1);
-        
         int k = i+1;
         //1 - Comprobar que k>m+1, y Hm <> 0
         if ((k>m+1)&&!h1.isEmpty()) {               
@@ -244,8 +256,8 @@ public class Apriori {
                             Regla regla = new Regla();
                             regla.consecuentes = aux.auxHfrec;
                             regla.antecedentes = aux.diferencia();
-                            regla.calcularConfSup(frecuentes.get(y).getDescripcion(),frecuentes.get(y).getCantidad(),frec.getFrecuentes().get(i-1),regla.antecedentes,CanTrans,f,k);                    
-
+                             regla.calcularConfSup(frecuentes.get(y).getDescripcion(),frecuentes.get(y).getCantidad(),frec.getFrecuentes().get(i-1),regla.antecedentes,regla.consecuentes,CanTrans,f,k);  
+                            
                             if(regla.getConfianza()>=minConfAp){
                                 reglasFinales.add(regla);
                             }                                  
@@ -256,6 +268,7 @@ public class Apriori {
         }
     }    
 
+    //genera los conjuntos Hk a partir de H1
     public List<String> genCandidatosHm(List<String> hm) {
         List<String> hmMasUno = new ArrayList<String>();
         //Hacer un producto cartesiano de hm x hm                      
@@ -301,7 +314,7 @@ public class Apriori {
         }
        return hmMasUno;   
     }
-    
+    //metodo poda para los conjuntos Hk
     public boolean podaHm(String[] stEntrada,List<String> hm, int k ){
         printCombination(stEntrada, stEntrada.length, k-1);
         aux.clear();
@@ -327,5 +340,4 @@ public class Apriori {
         return false;
     }
     
-    
-}
+ }

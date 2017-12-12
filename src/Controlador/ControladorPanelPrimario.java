@@ -232,8 +232,8 @@ public class ControladorPanelPrimario implements ActionListener, KeyListener{
            new ControladorPanelSecundario(principal).cargarListas(reglas);
            CardLayout cl = (CardLayout) principal.Contenedor.getLayout();
            cl.show(principal.Contenedor,"card3");
-           pp.confianzaTxf.setText("");
-           pp.soporteTxf.setText("");
+           pp.confianzaTxf.setText(pp.confianzaTxf.getText());
+           pp.soporteTxf.setText(pp.soporteTxf.getText());
         }
     }        
 }
